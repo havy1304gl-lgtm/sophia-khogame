@@ -3,6 +3,15 @@
   command = "npm run build:netlify"
   publish = "dist-netlify"
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Cache-Control = "no-store"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

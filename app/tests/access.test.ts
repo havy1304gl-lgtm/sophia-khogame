@@ -1,0 +1,18 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {handleAccess,loginBucket,loginLimit,loginWindowMs} from '../server/access-handler.ts';
+import {sessionRole,accessHours} from '../lib/access-policy.ts';
+const request=(body:unknown,origin='https://sophia.example')=>new Request('https://sophia.example/.netlify/functions/access',{method:'POST',headers:{'Content-Type':'application/json',origin},body:JSON.stringify(body)});
+test('Server grants only the role of the matching password; client role hints cannot escalate player',async()=>{const calls:any[]=[];const deps={adminPassword:'test-manager',playerPassword:'test-reader',version:'test-v1',reserve:async()=>0,mint:async(...args:any[])=>{calls.push(args);return 'opaque-token';},now:()=>1000};
+ assert.equal((await handleAccess(request({password:'test-reader',role:'admin'}),'local',deps)).status,200);assert.deepEqual(calls[0],['player',1000+accessHours*3600000,'test-v1']);
+ assert.equal((await handleAccess(request({password:'test-manager'}),'local',deps)).status,200);assert.equal(calls[1][0],'admin');
+ const bad=await handleAccess(request({password:'wrong'}),'local',deps);assert.equal(bad.status,401);assert.equal(calls.length,2);assert(!JSON.stringify(await bad.json()).includes('test-manager'));
+});
+test('Login fails closed for missing/equal secrets, cross origin, bad input, and a throttled address',async()=>{let minted=false;const deps={adminPassword:'manager',playerPassword:'reader',version:'v1',reserve:async()=>90,mint:async()=>{minted=true;return 'token';}};
+ assert.equal((await handleAccess(request({password:'manager'}),'a',{...deps,adminPassword:''})).status,503);
+ assert.equal((await handleAccess(request({password:'manager'}),'a',{...deps,playerPassword:'manager'})).status,503);
+ assert.equal((await handleAccess(request({password:'manager'},'https://other.example'),'a',deps)).status,403);
+ assert.equal((await handleAccess(request({password:{role:'admin'}}),'a',deps)).status,400);
+ const blocked=await handleAccess(request({password:'manager'}),'a',deps);assert.equal(blocked.status,429);assert.equal(blocked.headers.get('Retry-After'),'90');assert.equal(minted,false);
+});
+test('Attempt bucket caps concurrent reservations and opens a fresh window without resetting on successful password',()=>{let bucket:{count:number;startedAt:number}|undefined;for(let i=0;i<loginLimit;i++){const result=loginBucket(bucket,100);assert.equal(result.retry,0);bucket=result;}assert.equal(loginBucket(bucket,200).retry,Math.ceil((loginWindowMs-100)/1000));assert.equal(loginBucket(bucket,100+loginWindowMs).count,1);});
+test('Only a server-issued supported role with a live session expiry is admitted',()=>{assert.equal(sessionRole({sophiaRole:'admin',sophiaSessionUntil:200},100),'admin');assert.equal(sessionRole({sophiaRole:'player',sophiaSessionUntil:200},100),'player');for(const claims of [{sophiaRole:'admin'},{sophiaRole:'owner',sophiaSessionUntil:200},{sophiaRole:'admin',sophiaSessionUntil:99},{sophiaRole:'admin',sophiaSessionUntil:'999'}])assert.equal(sessionRole(claims,100),null);});

@@ -7,6 +7,12 @@ app/.wrangler/
 app/.sites-runtime/
 app/tsconfig.tsbuildinfo
 app/.env*
+!app/.env.example
+!app/.env.offline
+!app/.env.production
+**/*service-account*.json
+**/*adminsdk*.json
+app/*-debug.log
 app/.openai/
 work/
 outputs/*.zip

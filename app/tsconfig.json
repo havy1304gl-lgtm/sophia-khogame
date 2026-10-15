@@ -23,6 +23,10 @@
     "static-main.tsx",
     "lib/*.ts",
     "tests/*.ts",
-    "vite.netlify.config.ts"
+    "vite.netlify.config.ts",
+    "firebase-env.d.ts",
+    "server/*.ts",
+    "netlify/functions/*.ts",
+    "tests/*.mts"
   ]
 }
