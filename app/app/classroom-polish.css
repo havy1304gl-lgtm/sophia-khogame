@@ -1,0 +1,88 @@
+/* Presentation polish layered over the existing game, preserving its board and rules. */
+.game-v3 .scene-modal .event-rule,.game-v3 .scene-modal:has(.target-select) .event-rule{font-size:clamp(22px,2vw,30px);line-height:1.38}
+.game-v3 .scene-modal .battle-outcome{font-size:clamp(24px,2.2vw,34px)}
+.game-v3 .scene-modal .target-select{font-size:20px}
+.game-v3 .scene-modal .target-select select{font-size:22px;min-height:46px}
+.game-v3 .scene-modal .grading .button{font-size:20px;min-height:48px}
+.game-v3 .scene-modal.choice-scene{display:grid;grid-template-rows:auto auto minmax(140px,1fr) auto auto auto;gap:12px;padding:22px 30px;height:min(920px,95dvh);max-height:95dvh}
+.game-v3 .scene-modal.choice-scene .round-top{grid-row:1}
+.game-v3 .scene-modal.choice-scene .event-display{grid-row:2;margin:0 auto;width:100%;text-align:center}
+.game-v3 .scene-modal.choice-scene .event-display h2{margin:8px 0 10px;font-size:clamp(34px,4.1vw,64px)}
+.game-v3 .scene-modal.choice-scene .event-rule{width:100%;text-align:center;margin:0 auto;max-width:1100px}
+.game-v3 .scene-modal.choice-scene .scene-shade{background:linear-gradient(180deg,#050d1ac9,#07142666 50%,#050b18e6)}
+.game-v3 .scene-modal.choice-scene .item-choices{grid-row:3;width:100%;margin:0;gap:clamp(14px,2vw,30px);min-height:0;align-items:stretch;max-width:1150px;justify-self:center}
+.game-v3 .scene-modal.choice-scene .item-choice{padding:10px 14px 12px;min-height:0;border-radius:18px;background:linear-gradient(0deg,#102339e8,#10233944);box-shadow:0 12px 35px #0004}
+.game-v3 .scene-modal.choice-scene .item-choice strong{font-size:clamp(22px,2vw,30px);line-height:1.15;margin-top:6px}
+.game-v3 .scene-modal.choice-scene .item-choice small{font-size:14px;letter-spacing:1px;margin-top:6px;line-height:1.15}
+.item-visual{position:relative;display:block;isolation:isolate;flex:1;min-height:0;width:100%}
+.game-v3 .scene-modal.choice-scene .item-choice .item-visual>img:first-child{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1}
+.game-v3 .scene-modal.choice-scene .item-choice.revealed{border-color:#ffe6a5;background:linear-gradient(0deg,#30485eeb,#497a8b55)}
+.loot-beam{position:absolute;left:20%;right:20%;top:0;bottom:15%;background:conic-gradient(from 155deg at 50% 100%,transparent,#ffe3a066,transparent 52deg);filter:blur(6px);z-index:2;animation:loot-beam 1.8s ease-in-out infinite alternate}
+.game-v3 .scene-modal.choice-scene .item-choice img.loot-reward{position:absolute;width:32%;height:48%;left:34%;top:0;object-fit:contain;z-index:3;filter:drop-shadow(0 0 18px #ffe29b);animation:loot-rise 1s ease-out both,loot-hover 2.8s 1s ease-in-out infinite alternate}
+.game-v3 .scene-modal.choice-scene .item-result{grid-row:4;width:100%;margin:0;max-width:none;text-align:center;padding:10px 16px;background:#05192ce8}
+.game-v3 .scene-modal.choice-scene .item-result>span{font-size:14px;letter-spacing:2px}
+.game-v3 .scene-modal.choice-scene .item-result strong{font-size:clamp(25px,2.4vw,36px);line-height:1.15;margin-top:4px}
+.game-v3 .scene-modal.choice-scene .item-result p{font-size:21px;line-height:1.25;margin-top:5px}
+.game-v3 .scene-modal.choice-scene:has(.target-select) .item-result p{display:none}
+.game-v3 .scene-modal.choice-scene .target-select{grid-row:5;width:100%;display:flex;align-items:center;justify-content:center;gap:15px}
+.game-v3 .scene-modal.choice-scene .target-select select{width:min(420px,60%)}
+.game-v3 .scene-modal.choice-scene .grading{grid-row:6;width:100%;justify-content:center;margin:0;padding:9px;min-height:60px}
+.game-v3 .scene-modal.choice-scene:has(.target-select) .item-choices{margin:0}
+.game-v3 .scene-modal.choice-scene:has(.target-select) .item-choice{padding:8px 12px}
+.game-v3 .scene-modal.choice-scene:has(.target-select) .event-display h2{font-size:clamp(34px,4.1vw,64px)}
+/* The vault counts real sprites, so the score stays a surprise until the final stone. */
+.game-v3 .round-modal.reward-modal{display:flex;flex-direction:column;isolation:isolate;width:min(1420px,96vw);height:min(900px,94dvh);max-height:94dvh;padding:24px 30px;overflow:hidden;background:linear-gradient(#020a17a6,#07132a66 55%,#050e1be6),url('/assets/v4/reward-vault-background.webp') center/cover;border-color:#eed19a}
+.game-v3 .reward-modal .round-top{flex-shrink:0;position:relative;z-index:2}
+.game-v3 .vault-reward{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:10px 0;text-shadow:0 3px 8px #000;text-align:center}
+.game-v3 .vault-reward .eyebrow{font-size:clamp(16px,1.5vw,22px);color:#ffe2a1}
+.game-v3 .vault-reward h2{font-size:clamp(70px,8vw,120px);line-height:1.03;margin:0;color:#ffe2a1;filter:drop-shadow(0 0 24px #e4bb6c66)}
+.game-v3 .vault-reward h2 small{display:block;font-size:clamp(16px,1.5vw,23px);letter-spacing:4px;margin-top:8px;color:#fff3ce}
+.game-v3 .vault-reward>p{font-size:clamp(22px,2vw,30px);margin:0;color:#f2f5ff}
+.game-v3 .vault-reward .reward-stones{flex:1;width:min(1100px,100%);min-height:130px;max-height:390px;display:flex;flex-wrap:wrap;align-content:center;align-items:center;justify-content:center;gap:10px 20px;margin:0;padding:10px}
+.reward-gem{position:relative;flex:0 1 13%;height:clamp(110px,18vh,185px);animation:gem-arrive .65s cubic-bezier(.17,.8,.3,1.2) both}
+.game-v3 .reward-gem img{height:100%;width:100%;object-fit:contain;animation:none;filter:drop-shadow(0 0 22px #94bdff77)}
+.reward-gem span{position:absolute;bottom:-6px;left:0;right:0;color:white;font-size:24px;font-weight:800;text-shadow:0 2px 8px #000}
+.reward-stones:has(.reward-gem:only-child) .reward-gem{flex-basis:24%;height:clamp(150px,27vh,260px)}
+.reward-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.game-v3 .reward-actions .button{font-size:21px;min-height:55px}
+.summoning-ring{width:140px;height:140px;border:3px solid #ffd79333;border-top-color:#ffe6a0;border-bottom-color:#83dfff;border-radius:50%;box-shadow:0 0 35px #8ccfff66,inset 0 0 35px #8ccfff44;animation:ring-spin 2s linear infinite}
+/* A full-width ceremony, with the trophy and heroes balancing the leaderboard. */
+.game-v3 .results.victory-scene{position:relative;isolation:isolate;grid-column:1/-1;grid-row:2/-1;display:grid;grid-template-columns:minmax(270px,.8fr) minmax(460px,1.3fr);align-items:center;gap:30px;padding:24px clamp(24px,5vw,100px);border:1px solid #f8d58966;border-radius:22px;background:linear-gradient(#06112366,#07142a44 60%,#061123aa),url('/assets/v4/victory-stage-background.webp') center/cover;overflow:auto;text-align:center}
+.champion-portrait{position:relative;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0}
+.champion-halo{position:absolute;inset:8% -10%;z-index:-1;background:radial-gradient(ellipse,#ffd77755,transparent 65%);animation:aura-pulse 5s ease-in-out infinite}
+.game-v3 .victory-scene .victory-art{height:clamp(200px,31vh,360px);width:100%;object-fit:contain;filter:drop-shadow(0 0 28px #ffd98288);margin:0;animation:trophy-enter 1s ease-out both}
+.champion-heroes{display:flex;justify-content:center;width:100%;height:clamp(120px,24vh,260px);margin-top:15px}
+.champion-heroes img{height:100%;min-width:0;max-width:65%;object-fit:contain;filter:drop-shadow(0 0 20px #74b8ff77)}
+.victory-content{min-width:0;width:100%;max-width:900px;justify-self:center}
+.game-v3 .victory-scene .eyebrow{font-size:clamp(14px,1.3vw,20px);letter-spacing:2px;color:#ffdf99}
+.game-v3 .victory-scene h2{font-size:clamp(45px,5.8vw,88px);line-height:1;margin:12px 0 3px;color:#ffe0a0;text-shadow:0 3px 2px #463218,0 0 28px #e9b44e88;font-weight:900}
+.champion-names{font-size:clamp(32px,3.3vw,54px);font-weight:800;color:#fff;margin:4px 0 8px;line-height:1.1;overflow-wrap:anywhere;text-shadow:0 3px 8px #000}
+.champion-score{display:flex;align-items:center;justify-content:center;gap:15px;font-size:clamp(40px,4.2vw,64px);font-weight:800;color:#ffe2a1;line-height:1.1}
+.champion-score span{font-size:17px;letter-spacing:2px;font-weight:600}
+.victory-progress{font-size:17px;color:#dce9ff;margin:8px 0}
+.game-v3 .victory-scene .ranking{width:100%;max-width:none;margin:14px auto;background:#061328df;border:1px solid #efcd8677;border-radius:14px;overflow:hidden}
+.game-v3 .victory-scene .ranking>div{padding:clamp(10px,1.5vh,18px) 22px;min-height:52px;display:flex;align-items:center;gap:14px}
+.game-v3 .victory-scene .ranking strong{font-size:clamp(22px,2vw,32px)}
+.game-v3 .victory-scene .ranking b{font-size:clamp(28px,2.7vw,42px);margin-left:auto;color:#ffe1a0;line-height:1}
+.game-v3 .victory-scene .ranking small{font-size:16px;font-weight:400}
+.rank-winner{background:linear-gradient(90deg,#d5a84b44,#2f263d44);border-left:4px solid #ffe2a0}
+.game-v3 .victory-scene .victory-actions{gap:8px;flex-wrap:wrap}
+.game-v3 .victory-actions .button{font-size:17px;padding:12px 14px;min-height:48px}
+.victory-confetti{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.victory-confetti i{position:absolute;top:-20px;width:8px;height:13px;background:#ffe0a1;animation:confetti-fall var(--fall) linear infinite;opacity:.8}
+.victory-confetti i:nth-child(3n){background:#66c9ff;width:5px}.victory-confetti i:nth-child(4n){background:#c892ff}
+@keyframes gem-arrive{0%{opacity:0;transform:translateY(-75px) scale(.2) rotate(-25deg)}65%{opacity:1;transform:translateY(8px) scale(1.1)}100%{transform:translateY(0) scale(1)}}
+@keyframes loot-rise{from{opacity:0;transform:translateY(70%) scale(.2)}to{opacity:1;transform:translateY(-8%) scale(1)}}
+@keyframes loot-hover{from{transform:translateY(-8%)}to{transform:translateY(-22%)}}
+@keyframes loot-beam{from{opacity:.4;transform:scaleX(.8)}to{opacity:1;transform:scaleX(1.2)}}
+@keyframes ring-spin{to{transform:rotate(360deg)}}
+@keyframes trophy-enter{from{opacity:0;transform:translateY(35px) scale(.7)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes confetti-fall{to{transform:translateY(100vh) rotate(540deg)}}
+@media(max-height:800px) and (min-width:701px){.game-v3 .scene-modal.choice-scene{gap:8px;padding:16px 24px}.game-v3 .scene-modal.choice-scene .item-result p{font-size:19px}.game-v3 .scene-modal.choice-scene .item-choice small{font-size:12px}.game-v3 .scene-modal.choice-scene .event-display .eyebrow{font-size:11px}.game-v3 .scene-modal.choice-scene .event-display h2{margin:5px 0 7px}.game-v3 .results.victory-scene{padding:12px 26px;gap:22px}.game-v3 .victory-scene .ranking>div{padding:8px 18px;min-height:44px}.game-v3 .victory-scene .ranking{margin:9px 0}.game-v3 .victory-scene .ranking strong{font-size:23px}.game-v3 .victory-scene .ranking b{font-size:29px}.game-v3 .victory-actions .button{font-size:15px;min-height:42px;padding:9px 11px}}
+@media(max-width:700px){.game-v3 .scene-modal .event-rule,.game-v3 .scene-modal:has(.target-select) .event-rule{font-size:21px}.game-v3 .scene-modal.choice-scene{height:95dvh;min-height:0;padding:12px;gap:9px;grid-template-rows:auto auto minmax(150px,1fr) auto auto auto;overflow:auto}.game-v3 .scene-modal.choice-scene .round-top{flex-wrap:wrap;gap:8px}.game-v3 .scene-modal.choice-scene .event-display h2,.game-v3 .scene-modal.choice-scene:has(.target-select) .event-display h2{font-size:32px;max-width:none;margin:6px 0}.game-v3 .scene-modal.choice-scene .event-rule{font-size:20px}.game-v3 .scene-modal.choice-scene .item-choices{gap:6px}.game-v3 .scene-modal.choice-scene .item-choice{padding:6px 4px;min-height:150px;border-radius:10px}.game-v3 .scene-modal.choice-scene .item-choice strong{font-size:17px}.game-v3 .scene-modal.choice-scene .item-choice small{font-size:10px;letter-spacing:0}.game-v3 .scene-modal.choice-scene .item-result strong{font-size:23px}.game-v3 .scene-modal.choice-scene .item-result p{font-size:17px}.game-v3 .scene-modal.choice-scene .item-result>span{font-size:11px}.game-v3 .scene-modal.choice-scene .target-select{display:block;font-size:17px}.game-v3 .scene-modal.choice-scene .target-select select{width:100%;font-size:18px}.game-v3 .scene-modal .grading .button{font-size:16px}.game-v3 .round-modal.reward-modal{padding:14px;gap:10px}.game-v3 .vault-reward{gap:12px}.game-v3 .vault-reward h2{font-size:80px}.game-v3 .vault-reward>p{font-size:21px}.game-v3 .vault-reward .reward-stones{gap:10px;max-height:330px}.reward-gem{flex-basis:25%;height:95px}.reward-gem span{font-size:19px}.game-v3 .reward-actions .button{font-size:17px;min-height:48px}.game-v3 .results.victory-scene{grid-row:2/-1;display:flex;flex-direction:column;gap:12px;padding:18px 12px;overflow:auto}.champion-portrait{width:100%;flex-direction:row;align-self:center;min-height:145px;height:145px;flex-shrink:0}.game-v3 .victory-scene .victory-art{height:145px;width:45%}.champion-heroes{height:140px;width:45%;margin:0}.game-v3 .victory-scene h2{font-size:43px;margin-top:8px}.champion-names{font-size:32px}.game-v3 .victory-scene .eyebrow{font-size:12px}.champion-score{font-size:42px}.victory-progress{font-size:14px}.game-v3 .victory-scene .ranking>div{padding:10px;min-height:48px;gap:10px}.game-v3 .victory-scene .ranking strong{font-size:22px}.game-v3 .victory-scene .ranking b{font-size:28px}.game-v3 .victory-actions .button{font-size:14px;padding:10px;min-height:42px}}
+.game-v3.reduced-motion .reward-gem,.game-v3.reduced-motion .loot-beam,.game-v3.reduced-motion .loot-reward,.game-v3.reduced-motion .champion-halo,.game-v3.reduced-motion .victory-art{animation:none!important}.game-v3.reduced-motion .victory-confetti{display:none}
+@media(prefers-reduced-motion:reduce){.reward-gem,.loot-beam,.loot-reward,.champion-halo,.game-v3 .victory-scene .victory-art{animation:none!important}.victory-confetti{display:none}}
+.game-v3 .victory-scene .victory-art{height:clamp(260px,42vh,440px)}
+.game-v3 .victory-scene:not([data-winners="1"]) .champion-names{font-size:clamp(24px,2.6vw,40px)}
+@media(max-height:800px) and (min-width:701px){.game-v3 .victory-scene[data-teams="5"] h2,.game-v3 .victory-scene[data-teams="6"] h2{font-size:56px;margin-top:7px}.game-v3 .victory-scene[data-teams="5"] .champion-score,.game-v3 .victory-scene[data-teams="6"] .champion-score{font-size:40px}.game-v3 .victory-scene[data-teams="5"] .ranking>div,.game-v3 .victory-scene[data-teams="6"] .ranking>div{min-height:40px;padding:5px 16px}.game-v3 .victory-scene[data-teams="5"] .ranking,.game-v3 .victory-scene[data-teams="6"] .ranking{margin:6px 0}.game-v3 .victory-scene[data-teams="5"] .champion-names,.game-v3 .victory-scene[data-teams="6"] .champion-names{font-size:34px}}
+@media(max-width:700px){.game-v3 .victory-scene .victory-art{height:145px}}

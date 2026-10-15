@@ -1,0 +1,9 @@
+// Keep editable lesson formatting while excluding executable or remote pasted content.
+const tags=new Set(['P','DIV','SPAN','B','STRONG','I','EM','U','S','BR','UL','OL','LI','H1','H2','H3','H4','BLOCKQUOTE','SUB','SUP','FONT']);
+const properties=['font-family','font-size','font-weight','font-style','text-decoration','color','background-color','text-align','line-height','white-space','margin-left'];
+export function cleanLessonHtml(html:string):string{
+ const doc=new DOMParser().parseFromString(html,'text/html');
+ const walk=(parent:Element)=>{for(const node of [...parent.children]){if(['SCRIPT','STYLE','IFRAME','OBJECT','SVG','MATH','IMG','VIDEO','AUDIO','LINK','META'].includes(node.tagName)){node.remove();continue;}walk(node);if(!tags.has(node.tagName)){node.replaceWith(...node.childNodes);continue;}const el=node as HTMLElement,style=el.style;const safe=properties.map(p=>[p,style.getPropertyValue(p)]).filter(([,v])=>v&&!/url\s*\(|expression|javascript|@import/i.test(v));if(node.tagName==='FONT'){const size=el.getAttribute('size'),color=el.getAttribute('color'),face=el.getAttribute('face');if(size&&/^[1-7]$/.test(size))safe.push(['font-size',['10','13','16','18','24','32','48'][Number(size)-1]+'px']);if(color&&/^#[a-f\d]{3,8}$/i.test(color))safe.push(['color',color]);if(face&&/^[\w ,'-]+$/.test(face))safe.push(['font-family',face]);}for(const a of [...el.attributes])el.removeAttribute(a.name);for(const [p,v] of safe)el.style.setProperty(p,v);}};
+ walk(doc.body);return doc.body.innerHTML;
+}
+export function lessonClipboardHtml(html:string,font:string,size:number,paper:string){return `<html><body><!--StartFragment--><div style="font-family:${font};font-size:${size}px;line-height:1.5;color:#172235;background-color:${paper};padding:20px">${cleanLessonHtml(html)}</div><!--EndFragment--></body></html>`;}

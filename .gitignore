@@ -1,0 +1,12 @@
+app/node_modules/
+app/dist/
+app/dist-netlify/
+app/.next/
+app/.vinext/
+app/.wrangler/
+app/.sites-runtime/
+app/tsconfig.tsbuildinfo
+app/.env*
+app/.openai/
+work/
+outputs/*.zip

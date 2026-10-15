@@ -1,0 +1,110 @@
+[
+  {
+    "version": 3,
+    "data": {
+      "assets": [
+        {
+          "id": "theme-stark-lab",
+          "prompt": "Use case: stylized-concept. Production asset: wide 16:9 background for an Avengers classroom game, Stark Lab theme. Premium cinematic game environment, a spacious futuristic armory and holographic laboratory, gunmetal surfaces, cobalt and cyan lighting, subtle warm amber power accents. Camera facing into the room, broad quiet dark floor and open center occupying 65% for a board of floating gems. Machinery and glass display cabinets at the outer edges, rightmost 20% comparatively quiet for an overlaid team scoreboard. No people, no armor figure, no gems, no UI, no lettering, no logos, no labels, no text. High-quality detailed painterly 3D concept art, polished materials, atmospheric volumetric rays, clearly readable silhouettes, tasteful controlled contrast. The image fills the screen; do not draw any frame or mockup.",
+          "method": "built-in image_gen",
+          "url": "/assets/v3/theme-stark-lab.webp"
+        },
+        {
+          "id": "theme-wakanda",
+          "prompt": "Use case: stylized-concept. Production asset: wide 16:9 background for an Avengers classroom game, Wakanda theme. Premium cinematic afrofuturist ceremonial chamber, obsidian black stone, carved geometric architectural patterns, warm fine gold detailing and glowing violet vibranium seams. A broad quiet dark floor and empty central staging area occupying 65% for floating gemstone game objects. Ornate details confined mostly to the sides and far background, rightmost 20% quiet for scoreboard. No people, no panther figure, no gems, no UI, no lettering, no logos, no labels, no text. Rich violet haze and elegant gold highlights, polished painterly 3D game environment, controlled contrast and clean silhouette composition. No frame or mockup.",
+          "method": "built-in image_gen",
+          "url": "/assets/v3/theme-wakanda.webp"
+        },
+        {
+          "id": "theme-sanctum",
+          "prompt": "Use case: stylized-concept. Production asset: wide 16:9 background for an Avengers classroom game, Sanctum theme and a Doctor Strange portal-choice event. Premium cinematic mystical temple interior, grand circular window high in the background, carved wood and stone, warm gold-orange magical light contrasting with deep indigo shadows. Broad quiet empty floor and center occupying 65% where separate interactive portals or gemstones will be placed by code. Subtle drifting sparks at edges, rightmost 20% quiet enough for a team scoreboard overlay. No people, no pre-rendered portals, no gems, no UI, no lettering, no readable runes, no logos, no text. Detailed polished painterly 3D concept art, dramatic volumetric atmosphere, beautiful materials, clean game-ready composition, no frame.",
+          "method": "built-in image_gen",
+          "url": "/assets/v3/theme-sanctum.webp"
+        },
+        {
+          "id": "theme-comic",
+          "prompt": "Use case: stylized-concept. Production asset: wide 16:9 full-screen background for an Avengers classroom game in a premium comic-book theme. A dynamic futuristic city rooftop arena in midnight navy, saturated cobalt, scarlet, and warm golden accents. Bold ink outlines, restrained halftone texture and dramatic comic lighting, layered skyline and energetic diagonals at the outer edges. The central 65% is a quiet dark flat rooftop staging area, uncluttered, where separate gemstone objects will be overlaid; rightmost 20% remains quiet for team scores. No people, no gems, no explosions in the center, no panels, no UI mockup, no letters, no captions, no logos, no text. Beautiful highly polished graphic-novel environment art, landscape cinematic composition.",
+          "method": "built-in image_gen",
+          "url": "/assets/v3/theme-comic.webp"
+        },
+        {
+          "id": "scene-guardians-cargo",
+          "prompt": "Use case: stylized-concept. Production asset: wide 16:9 scene background for a Guardians of the Galaxy cargo-choice event in an Avengers classroom game. Interior of an eccentric but premium interstellar cargo ship, metallic walls with copper and teal illumination, huge rear window revealing violet nebula and distant stars. A broad clear cargo floor in the lower-center with room to overlay three separate loot crates; rich mechanical details at the edges only. No characters, no foreground crates, no UI, no text, no symbols to read, no logos. Cinematic polished painterly 3D game environment, vibrant cool colors and warm spotlights, depth and volumetric lighting, slightly playful adventurous mood, clean central composition.",
+          "method": "built-in image_gen",
+          "url": "/assets/v3/scene-guardians-cargo.webp"
+        },
+        {
+          "id": "choice-loot-crate",
+          "prompt": "Use case: stylized-concept. Production asset: a SINGLE isolated interstellar mystery cargo chest for a Guardians of the Galaxy choice event in an Avengers classroom game. Three-quarter front view, stout premium gunmetal chest with bevels, gold-bronze clasps, a small bright teal energy lock, subtle purple-blue edge reflections, beautifully crafted detailed sci-fi materials. Closed lid, unmistakable chest silhouette, no numbers, no question mark, no letters, no logo, no text. Object fully visible, centered with generous transparent margin, occupies 75% of square image. Genuine transparent background (alpha), no scenery, no floor, no baked background glow, minimal soft contact shadow only. Polished cinematic 3D game asset; suitable for glowing rim light added in code.",
+          "method": "built-in image_gen",
+          "url": "/assets/v3/choice-loot-crate.webp"
+        },
+        {
+          "id": "tech-pedestal-v3",
+          "prompt": "Premium 3D game asset: one isolated low, broad, circular futuristic metal display pedestal, viewed slightly from above. Dark gunmetal, bronze edges, narrow cyan luminous trim. Empty top recess for a floating gemstone that will be added separately. The front face has a wide blank dark nameplate facing the viewer for a large number to be added separately. No gemstone, letters, numbers, symbols, logos or scenery. Fully visible, clean generous margins, genuine transparent alpha background. Width about 1.7 times height. Beautiful polished cinematic materials.",
+          "method": "built-in image_gen",
+          "url": "/assets/v3/tech-pedestal-v3.webp"
+        },
+        {
+          "id": "thanos-backdrop-v3",
+          "prompt": "Edit the supplied game image to produce just the background environment. Remove the character and hand, fill in the landscape behind him, and extend the environment to a wide 16:9 scene. Preserve the source's warm dusty rock landscape, amber sky and atmospheric cinematic lighting. No characters, text, UI or frames. Keep the left portion darker and relatively quiet for game interface overlays.",
+          "method": "built-in image_gen",
+          "url": "/assets/v3/thanos-backdrop-v3.webp"
+        }
+      ],
+      "limitations": [
+        "Thanos transparent cutout and Stark helmet generation rejected by image tool; retain original PPT images and compose scene effects in UI."
+      ]
+    }
+  },
+  {
+    "version": 4,
+    "data": {
+      "tool": "built-in image_gen",
+      "assets": [
+        {
+          "id": "choice-loot-crate-open",
+          "prompt": "Use case: precise-object-edit. Edit the referenced closed sci-fi game chest into its OPEN state, lid hinged backward, same gunmetal panels, gold structural bands, circular cyan lock on front, same three-quarter camera and recognizable proportions. Entire object visible with generous transparent margins, square sprite, genuinely transparent background. Empty dark interior with subtle cyan illumination so separate reward sprites can later emerge through animation. No treasure, text, floor, pedestal, background, or large baked-in beams. Polished high-detail game prop matching reference.",
+          "transparent": true,
+          "path": "app/public/assets/v4/choice-loot-crate-open.webp"
+        },
+        {
+          "id": "reward-vault-background",
+          "prompt": "Use case: stylized-concept. Wide 16:9 cinematic background for a superhero classroom game's gemstone reward reveal. A magnificent futuristic cosmic vault, six softly glowing jewel-colored conduits framing a central circular holographic collection platform. Dark midnight navy and cyan with tasteful gold light, tiny stardust, atmospheric depth, sophisticated 3D game illustration. Center 65 percent is dark uncluttered open space for animated floating gemstones and large readable text. Architecture richly fills edges, floor visible at bottom. No gems, characters, lettering, numbers, UI, logos, or watermarks.",
+          "transparent": false,
+          "path": "app/public/assets/v4/reward-vault-background.webp"
+        },
+        {
+          "id": "victory-stage-background",
+          "prompt": "Use case: stylized-concept. Wide 16:9 cinematic superhero game championship arena background. Monumental golden victory dais with shallow steps across bottom, sweeping gold and blue spotlights from far sides, celestial blue stadium arches, starfield beyond, tasteful sparse golden confetti at edges. Dark navy center with generous readable space for trophy, champion name and leaderboard, dramatic luminous gold rim around stage. Rich finished 3D fantasy sci-fi game art. No actual trophy, characters, text, UI, logos, watermarks. Celebratory but clear composition.",
+          "transparent": false,
+          "path": "app/public/assets/v4/victory-stage-background.webp"
+        }
+      ]
+    }
+  },
+  {
+    "version": 8,
+    "method": "built-in image_gen; optimized WebP with original alpha preserved",
+    "assets": [
+      {
+        "id": "guardian-sky",
+        "path": "C:\\Users\\Admin 1\\Documents\\ChatGPT\\Avenger infinity\\app\\public\\assets\\guardian-sky.webp",
+        "url": "/assets/guardian-sky.webp",
+        "prompt": "Use case: stylized-concept. Create one original fantasy classroom game mascot: a friendly adult sky guardian in teal and silver armor, short dark hair, long flowing white cape, holding a glowing cyan crystal staff. Single full body standing hero, head to boots completely visible, front three-quarter view, relaxed confident pose. Polished colorful 3D painted game illustration. Tall portrait cutout with genuinely transparent background. No scenery, no floor, no text, no existing franchise character, no logos."
+      },
+      {
+        "id": "guardian-solar",
+        "path": "C:\\Users\\Admin 1\\Documents\\ChatGPT\\Avenger infinity\\app\\public\\assets\\guardian-solar.webp",
+        "url": "/assets/guardian-solar.webp",
+        "prompt": "Use case: stylized-concept. Create one original fantasy classroom game mascot: a friendly adult female solar guardian, warm brown skin, dark braided hair, elegant gold and burgundy superhero armor, short flowing burgundy cape, small glowing sun in one raised hand. Single full body standing hero, head to boots completely visible, front three-quarter view, relaxed confident pose. Polished colorful 3D painted game illustration. Tall portrait cutout with genuinely transparent background. No scenery, no floor, no text, no existing franchise character, no logos."
+      },
+      {
+        "id": "guardian-jade",
+        "path": "C:\\Users\\Admin 1\\Documents\\ChatGPT\\Avenger infinity\\app\\public\\assets\\guardian-jade.webp",
+        "url": "/assets/guardian-jade.webp",
+        "prompt": "Use case: stylized-concept. Create one original fantasy classroom game mascot: a friendly adult male jade guardian, emerald green and charcoal futuristic armor, short silver hair, broad protective shoulder armor, holding a small emerald energy shield beside one arm. Single full body standing hero, head to boots completely visible, front three-quarter view, relaxed confident pose. Polished colorful 3D painted game illustration. Tall portrait cutout with genuinely transparent background. No scenery, no floor, no text, no existing franchise character, no logos."
+      }
+    ]
+  }
+]
