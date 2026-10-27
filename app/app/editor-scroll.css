@@ -1,0 +1,17 @@
+/* Constrain grid tracks so enlarged text scrolls inside the editor. */
+.editor-body {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.editor-body > .question-nav,
+.editor-body > .question-form {
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 640px) {
+  .editor-body {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+}

@@ -15,6 +15,7 @@ import {CinematicBackdrop,ItemChoices} from './cinematic-scene';
 import './cinematic.css';
 import './classroom-polish.css';
 import './whiteboard.css';
+import './editor-scroll.css';
 import './sophia.css';
 import './soundtrack.css';
 import {SoundtrackControls} from './soundtrack-controls';
