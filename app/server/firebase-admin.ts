@@ -2,7 +2,7 @@ import {cert,getApps,initializeApp} from 'firebase-admin/app';
 import {createFirebaseToken} from './custom-token.ts';
 import {getFirestore} from 'firebase-admin/firestore';
 import {createHmac} from 'node:crypto';
-import {handleAccess,loginBucket} from './access-handler.ts';
+import {AccessServiceError,firebaseFailure,handleAccess,loginBucket} from './access-handler.ts';
 export async function accessEndpoint(request:Request,ip:string){
  const env=process.env;
  try{
@@ -18,15 +18,17 @@ export async function accessEndpoint(request:Request,ip:string){
   return handleAccess(request,ip,{
    adminPassword:env.SOPHIA_ADMIN_PASSWORD??'',playerPassword:env.SOPHIA_PLAYER_PASSWORD??'',version,
    reserve:async address=>{
-    const secret=env.SOPHIA_RATE_LIMIT_SECRET;if(!secret||secret.length<32)throw new Error();
+    const secret=env.SOPHIA_RATE_LIMIT_SECRET;if(!secret||secret.length<32)throw new AccessServiceError('RATE_SECRET_SHORT','Khóa SOPHIA_RATE_LIMIT_SECRET của Production chưa đủ 32 ký tự. Chủ app cần lưu lại và deploy mới.');
     const key=createHmac('sha256',secret).update(address||'unknown').digest('hex'),ref=db.doc('_login_limits/'+key);
-    return db.runTransaction(async tx=>{const snap=await tx.get(ref),bucket=loginBucket(snap.exists?snap.data() as {count:number;startedAt:number}:undefined,Date.now());if(!bucket.retry)tx.set(ref,{count:bucket.count,startedAt:bucket.startedAt,expiresAt:new Date(bucket.startedAt+24*60*60*1000)});return bucket.retry;});
+    try{return await db.runTransaction(async tx=>{const snap=await tx.get(ref),bucket=loginBucket(snap.exists?snap.data() as {count:number;startedAt:number}:undefined,Date.now());if(!bucket.retry)tx.set(ref,{count:bucket.count,startedAt:bucket.startedAt,expiresAt:new Date(bucket.startedAt+24*60*60*1000)});return bucket.retry;});}catch(error){throw firebaseFailure('FIRESTORE',error);}
    },
    mint:async(role,until,accessVersion)=>{
+    try{
     const control=db.doc('_access/control'),current=await control.get();
     if(!current.exists)await control.create({version:accessVersion}).catch(async error=>{const actual=await control.get();if(!actual.exists)throw error;});
     if((await control.get()).data()?.version!==accessVersion)throw new Error();
     return createFirebaseToken('sophia-access-'+role,{sophiaRole:role,sophiaSessionUntil:until,sophiaAccessVersion:accessVersion},credential,emulator);
+    }catch(error){throw firebaseFailure('TOKEN',error);}
    }
   });
  }catch{return new Response(JSON.stringify({error:'Cổng đăng nhập chưa kết nối Firebase. Chủ app cần hoàn tất cấu hình máy chủ.'}),{status:503,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});}

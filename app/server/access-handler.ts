@@ -1,5 +1,16 @@
 import {createHash,timingSafeEqual} from 'node:crypto';
 import {accessHours,type AccessRole} from '../lib/access-policy.ts';
+export class AccessServiceError extends Error {
+ readonly diagnostic:string;
+ constructor(diagnostic:string,message:string){super(message);this.diagnostic=diagnostic;}
+}
+export function firebaseFailure(stage:'FIRESTORE'|'TOKEN',error:unknown){
+ const raw=error && typeof error==='object' && 'code' in error?String(error.code):'';
+ const code=/^(?:[0-9]{1,2}|auth\/[a-z-]+)$/.test(raw)?raw:'UNKNOWN';
+ const diagnostic=`${stage}_${code}`;
+ console.error('[SOPHIA access]',diagnostic);
+ return new AccessServiceError(diagnostic,`Máy chủ chưa kết nối Firebase (${diagnostic}).`);
+}
 type Dependencies={adminPassword:string;playerPassword:string;version:string;reserve:(ip:string)=>Promise<number>;mint:(role:AccessRole,until:number,version:string)=>Promise<string>;now?:()=>number};
 const response=(status:number,body:unknown,retry?:number)=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...(retry?{'Retry-After':String(retry)}:{})}});
 function same(a:string,b:string){return timingSafeEqual(createHash('sha256').update(a).digest(),createHash('sha256').update(b).digest());}
@@ -15,7 +26,7 @@ export async function handleAccess(request:Request,ip:string,deps:Dependencies){
   if(!admin&&!player)return response(401,{error:'Mật khẩu chưa đúng.'});
   const role=admin?'admin':'player',until=(deps.now??Date.now)()+accessHours*60*60*1000;
   return response(200,{token:await deps.mint(role,until,deps.version)});
- }catch{return response(503,{error:'Chưa kết nối được dịch vụ đăng nhập. Vui lòng thử lại sau.'});}
+ }catch(error){return response(503,{error:error instanceof AccessServiceError?error.message:'Chưa kết nối được dịch vụ đăng nhập. Vui lòng thử lại sau.'});}
 }
 export const loginWindowMs=15*60*1000,loginLimit=10;
 export function loginBucket(previous:{count:number;startedAt:number}|undefined,now:number){
