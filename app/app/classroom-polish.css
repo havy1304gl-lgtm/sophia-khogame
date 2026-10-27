@@ -86,3 +86,11 @@
 .game-v3 .victory-scene:not([data-winners="1"]) .champion-names{font-size:clamp(24px,2.6vw,40px)}
 @media(max-height:800px) and (min-width:701px){.game-v3 .victory-scene[data-teams="5"] h2,.game-v3 .victory-scene[data-teams="6"] h2{font-size:56px;margin-top:7px}.game-v3 .victory-scene[data-teams="5"] .champion-score,.game-v3 .victory-scene[data-teams="6"] .champion-score{font-size:40px}.game-v3 .victory-scene[data-teams="5"] .ranking>div,.game-v3 .victory-scene[data-teams="6"] .ranking>div{min-height:40px;padding:5px 16px}.game-v3 .victory-scene[data-teams="5"] .ranking,.game-v3 .victory-scene[data-teams="6"] .ranking{margin:6px 0}.game-v3 .victory-scene[data-teams="5"] .champion-names,.game-v3 .victory-scene[data-teams="6"] .champion-names{font-size:34px}}
 @media(max-width:700px){.game-v3 .victory-scene .victory-art{height:145px}}
+
+.answering-team-picker{border:1px solid #6685a366;border-radius:14px;padding:12px 16px;margin:0 0 18px;background:#081426c9}
+.answering-team-picker legend{font-size:18px;font-weight:700;color:#f6d68a;padding:0 6px}
+.answering-team-picker>div{display:flex;flex-wrap:wrap;gap:10px}
+.answering-team-picker button{flex:1 1 120px;min-height:50px;padding:8px 14px;border:2px solid #6685a366;border-radius:10px;background:#17283d;color:#fff;font-size:22px;font-weight:700;cursor:pointer}
+.answering-team-picker button.selected{border-color:var(--team-color);background:color-mix(in srgb,var(--team-color) 24%,#122035)}
+.answering-team-picker button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.answering-team-picker small{display:block;margin-top:9px;font-size:14px;color:#bbcddd}

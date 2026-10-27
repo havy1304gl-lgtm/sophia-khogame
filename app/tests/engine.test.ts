@@ -1,5 +1,5 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';
-import {randomStoneReward,choiceEvents,selectItem,makeChoiceOutcomes,answerKeys,completeReward,allocate,applyEvent,createGame,endGame,grade,missionSamples,openRound,presets,undo,validateQuestion,type Config,type EventKind} from '../lib/engine.ts';
+import {randomStoneReward,choiceEvents,selectItem,makeChoiceOutcomes,answerKeys,completeReward,selectAnsweringTeam,allocate,applyEvent,createGame,endGame,grade,missionSamples,openRound,presets,undo,validateQuestion,type Config,type EventKind} from '../lib/engine.ts';
 import {demo} from '../lib/demo.ts';import {access,type Member} from '../lib/permissions.ts';
 const config:Config={count:25,seconds:30,negative:false,weights:presets.balanced,pkWin:5,pkLose:3,pkDraw:1,missions:missionSamples,sound:false,motion:false};
 const make=()=>createGame(demo,['One','Two','Three','Four','Five','Six'],config);
@@ -27,3 +27,19 @@ test('Item choice locks after reveal and applies once; all teams/empty/shield/sw
 test('Older 10-event setup remains compatible when creating a new game',()=>{const game=createGame(demo,['One','Two'],{...config,weights:[60,8,1,0,5,4,4,4,6,8]});assert.equal(game.config.weights.length,13);assert.equal(game.cells.length,25);});
 
 test("Stone jackpot is 1%, common rewards stay within 1–6",()=>{const draws=Array.from({length:100},(_,i)=>randomStoneReward(()=>(i+.5)/100));assert.equal(draws.filter(x=>x===12).length,1);assert(draws.every(x=>(x>=1&&x<=6)||x===12));assert.equal(draws.filter(x=>x===3).length,25);});
+
+test('Teacher transfers question rewards and events but preserves original turn rotation',()=>{
+ let g=make();g.config.randomRewards=true;g.cells[0].event='normal';g.cells[0].reward=4;
+ g=openRound(g,0,undefined,()=>0);g.round!.timer=17;g.round!.selectedOption=1;
+ const selected=selectAnsweringTeam(g,3);
+ assert.equal(selected.turn,3);assert.equal(selected.round!.timer,17);assert.equal(selected.round!.originalTurn,0);assert.equal(selected.round!.selectedOption,null);
+ assert.notEqual(selected.round!.opponent,3);assert.equal(undo(selected).turn,0);
+ const awarded=grade(selected,4,true);assert.equal(awarded.teams[3].score,4);assert.equal(awarded.teams[0].score,0);
+ assert.strictEqual(selectAnsweringTeam(awarded,1),awarded);
+ const done=completeReward(awarded);assert.equal(done.turn,1);assert.equal(done.cells[0].used,true);
+ let ev=make();ev.cells[0].event='shield';ev=openRound(ev,0,undefined,()=>0);
+ ev=selectAnsweringTeam(selectAnsweringTeam(ev,1),4);
+ const finished=applyEvent(grade(ev,5,true));assert.equal(finished.teams[4].shield,true);assert.equal(finished.turn,1);
+ const wrong=grade(selectAnsweringTeam(openRound(make(),0),3),0,false);assert.equal(wrong.turn,1);
+ const opened=openRound(make(),0);for(const value of [-1,6,1.5,NaN])assert.strictEqual(selectAnsweringTeam(opened,value),opened);
+});
