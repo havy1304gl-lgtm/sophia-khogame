@@ -7,6 +7,16 @@ import {mysteryDemo} from '../lib/mystery-demo.ts';
 import {musicTracks,normalizeMusic} from '../lib/music-profile.ts';
 const config:Config={count:9,seconds:30,timerEnabled:false,negative:false,weights:presets.balanced,pkWin:5,pkLose:3,pkDraw:1,missions:missionSamples,sound:false,motion:false};
 
+test('Hints start hidden and replacing a question hides its hint without changing scores',()=>{
+ const quiz={...demo,questions:demo.questions.map(q=>({...q,hint:'Try a verb.'}))};
+ const g=openRound(createGame(quiz,['A','B'],config),0);
+ assert.equal(g.round?.hintShown,false);assert.equal(g.cells[0].question.hint,'Try a verb.');
+ g.round!.hintShown=true;
+ const changed=replaceQuestion(g,g.spare[0].id);
+ assert.equal(changed.round?.hintShown,false);assert.deepEqual(changed.teams,g.teams);
+ assert.equal(changed.round?.answerShown,false);
+});
+
 test('Avengers changes only question; rewards, event, teams and undo remain intact',()=>{
  const g=openRound(createGame(demo,['A','B'],config),0),next=g.spare[0],old=g.cells[0].question;
  const changed=replaceQuestion(g,next.id);assert.equal(changed.cells[0].question.id,next.id);assert.equal(changed.cells[0].reward,g.cells[0].reward);assert.equal(changed.cells[0].event,g.cells[0].event);assert.deepEqual(changed.cells[0].choiceOutcomes,g.cells[0].choiceOutcomes);assert.deepEqual(changed.teams,g.teams);assert.equal(changed.turn,g.turn);assert(changed.spare.some(q=>q.id===old.id));assert(!changed.spare.some(q=>q.id===next.id));

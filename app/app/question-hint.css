@@ -1,0 +1,4 @@
+.question-hint{margin:16px 0;text-align:left}
+.question-hint-content{margin-top:12px;padding:16px 20px;border:1px solid #c5a45c88;border-radius:10px;background:#302c20;color:#fff0c9;overflow-wrap:anywhere}
+.question-hint-content>strong{display:block;font-size:16px;color:#efd08e;margin-bottom:8px}
+.question-hint-content>p{font-size:var(--teaching-answer-size,28px);line-height:1.5;white-space:pre-wrap;margin:0}
