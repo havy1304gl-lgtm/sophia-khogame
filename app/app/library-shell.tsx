@@ -1,0 +1,16 @@
+'use client';
+import {createContext,useContext,useState,type ReactNode} from 'react';
+import {ArrowRight,BookOpen,Check,HelpCircle,Library,Music2,X} from 'lucide-react';
+import {SophiaBrand} from './sophia-brand';
+import {toggleWhiteboard} from './whiteboard';
+import {openMusicSettings} from './soundtrack-controls';
+import type {Quiz} from '../lib/engine';
+import './library-shell.css';
+
+const Selection=createContext<{selectedQuiz:Quiz|null;selectQuiz:(quiz:Quiz|null)=>void}>({selectedQuiz:null,selectQuiz:()=>{}});
+export function QuizSelectionProvider({children}:{children:ReactNode}){const [selectedQuiz,selectQuiz]=useState<Quiz|null>(null);return <Selection.Provider value={{selectedQuiz,selectQuiz}}>{children}</Selection.Provider>;}
+export const useSelectedQuiz=()=>useContext(Selection);
+export function LibraryShell({active,title,subtitle,onGames,onQuestions,onHelp,sidebar,tools,children}:{active:'games'|'questions';title:string;subtitle:string;onGames:()=>void;onQuestions:()=>void;onHelp?:()=>void;sidebar?:ReactNode;tools?:ReactNode;children:ReactNode}){
+ const {selectedQuiz,selectQuiz}=useSelectedQuiz();
+ return <div className="library-shell"><aside className="library-sidebar"><a href="#games" className="brand sophia-brand" onClick={e=>{e.preventDefault();onGames();}}><SophiaBrand/></a><span className="library-workspace">CLASSROOM WORKSPACE</span><nav aria-label="Điều hướng SOPHIA"><button aria-label="Kho trò chơi" title="Kho trò chơi" aria-current={active==='games'?'page':undefined} className={active==='games'?'active':''} onClick={onGames}><Library size={21}/><span>Kho trò chơi</span><ArrowRight size={15}/></button><button aria-label="Kho đề" title="Kho đề" aria-current={active==='questions'?'page':undefined} className={active==='questions'?'active':''} onClick={onQuestions}><BookOpen size={21}/><span>Kho đề</span><ArrowRight size={15}/></button><button aria-label="Whiteboard Alt+W" title="Whiteboard · Alt+W" onClick={toggleWhiteboard}><BookOpen size={21}/><span>Whiteboard</span><kbd>Alt+W</kbd></button>{onHelp&&<button aria-label="Hướng dẫn" title="Hướng dẫn" onClick={onHelp}><HelpCircle size={21}/><span>Hướng dẫn</span></button>}</nav>{sidebar&&<div className="library-sidebar-extra">{sidebar}</div>}<div className="library-sidebar-footer"><span className="library-status-dot"/>SOPHIA ENGLISH<small>Play. Learn. Shine.</small></div></aside><main className="library-main"><header className="library-topbar"><div><span>SOPHIA / {active==='games'?'GAMES':'QUESTION BANK'}</span><strong>{title}</strong></div><div className="actions">{tools}<button className="button" onClick={openMusicSettings}><Music2 size={18}/>Nhạc nền</button></div></header><div className="library-page-heading"><div><span className="eyebrow">YOUR CLASSROOM, CONNECTED</span><h1>{title}</h1><p>{subtitle}</p></div>{selectedQuiz&&<div className="library-selected-quiz"><span><Check size={15}/>ĐỀ ĐANG CHỌN</span><strong>{selectedQuiz.title}</strong><small>{selectedQuiz.questions.length} câu</small><div><button onClick={onQuestions}>Đổi đề</button><button aria-label="Bỏ chọn đề" onClick={()=>selectQuiz(null)}><X size={15}/></button></div></div>}</div><div className="library-content">{children}</div><footer className="library-footer-brand">SOPHIA ENGLISH<span>Learn together. Win together.</span></footer></main></div>;
+}

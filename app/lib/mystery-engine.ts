@@ -1,13 +1,13 @@
 import {shuffle,validateQuestion,type Question,type Quiz} from './engine.ts';
 
 export type MysteryEffect={kind:'points';value:number}|{kind:'bomb'|'bombAll'|'swap'|'increase'|'decrease'|'rps'|'finalChoice'};
-export type MysteryConfig={count:number;labels:'numbers'|'letters';seconds:number;finalBattle:boolean;sound:boolean;motion:boolean};
+export type MysteryConfig={count:number;labels:'numbers'|'letters';seconds:number;finalBattle:boolean;sound:boolean;motion:boolean;timerEnabled?:boolean};
 export type MysteryTeam={name:string;score:number;color:string};
 export type MysteryCell={question:Question;effect:MysteryEffect;used:boolean;correct?:boolean};
-export type MysteryRound={index:number;final:boolean;actor:number;stage:'question'|'decision'|'sealed'|'revealing'|'result';answerShown:boolean;selected:number[];recipient:number|null;resolved:boolean;secondsLeft:number;timerRunning:boolean;before:number[];message:string};
-type State={version:1;quizId:string;quizTitle:string;config:MysteryConfig;teams:MysteryTeam[];cells:MysteryCell[];finalCells:MysteryCell[];phase:'main'|'final'|'ended';turn:number;round:MysteryRound|null;logs:string[];startedAt:string};
+export type MysteryRound={index:number;final:boolean;actor:number;stage:'question'|'decision'|'sealed'|'revealing'|'result';answerShown:boolean;answerSeen?:boolean;selected:number[];recipient:number|null;resolved:boolean;secondsLeft:number;timerRunning:boolean;before:number[];message:string};
+type State={version:1;quizId:string;quizTitle:string;config:MysteryConfig;teams:MysteryTeam[];cells:MysteryCell[];finalCells:MysteryCell[];phase:'main'|'final'|'ended';turn:number;round:MysteryRound|null;logs:string[];startedAt:string;spare?:Question[];finalSpare?:Question[]};
 export type MysteryGame=State&{history:State[]};
-export const defaultMysteryConfig:MysteryConfig={count:24,labels:'letters',seconds:30,finalBattle:true,sound:true,motion:true};
+export const defaultMysteryConfig:MysteryConfig={count:24,labels:'letters',seconds:30,timerEnabled:false,finalBattle:true,sound:true,motion:true};
 export const originalEffects:MysteryEffect[]=[1,-2,3,3,4,-3,5,-6,'bomb',-6,10,7,5,-1,-2,'swap',2,4,'bombAll',4,9,'increase','decrease','rps'].map(x=>typeof x==='number'?{kind:'points',value:x}:{kind:x as Exclude<MysteryEffect['kind'],'points'>});
 const teamColors=['#56c8ff','#ff787c','#ffd25e','#af99ff','#58e5bd','#ffa35c'];
 export function mysteryLabel(i:number,labels:MysteryConfig['labels']){if(labels==='numbers')return String(i+1);let n=i+1,s='';while(n>0){n--;s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26);}return s;}
@@ -25,33 +25,46 @@ export function createMysteryGame(quiz:Quiz,names:string[],config:MysteryConfig,
  const effects:MysteryEffect[]=[];while(effects.length<config.count)effects.push(...shuffle(structuredClone(originalEffects),rng));
  const finalEffects=shuffle<MysteryEffect>([{kind:'finalChoice'},{kind:'bomb'},{kind:'points',value:15}],rng);
  const cell=(question:Question,effect:MysteryEffect):MysteryCell=>({question,effect,used:false});
- return {version:1,quizId:quiz.id,quizTitle:quiz.title,config:{...config},teams:names.map((name,i)=>({name:name.trim().slice(0,50)||`Đội ${i+1}`,score:0,color:teamColors[i]})),cells:main.slice(0,config.count).map((q,i)=>cell(q,effects[i])),finalCells:config.finalBattle?final.slice(0,3).map((q,i)=>cell(q,finalEffects[i])):[],phase:'main',turn:0,round:null,logs:[],history:[],startedAt:new Date().toISOString()};
+ return {version:1,quizId:quiz.id,quizTitle:quiz.title,config:{...config},teams:names.map((name,i)=>({name:name.trim().slice(0,50)||`Đội ${i+1}`,score:0,color:teamColors[i]})),cells:main.slice(0,config.count).map((q,i)=>cell(q,effects[i])),finalCells:config.finalBattle?final.slice(0,3).map((q,i)=>cell(q,finalEffects[i])):[],phase:'main',turn:0,round:null,spare:main.slice(config.count+(original?0:config.finalBattle?3:0)),logs:[],history:[],startedAt:new Date().toISOString()};
 }
 function remember(g:MysteryGame){const {history,...state}=g;const a=structuredClone(g);a.history=[...history.slice(-29),structuredClone(state)];return a;}
 export function undoMystery(g:MysteryGame):MysteryGame{const prev=g.history.at(-1);return prev?{...structuredClone(prev),history:g.history.slice(0,-1)}:g;}
 export function currentMysteryCell(g:MysteryGame){const r=g.round;return r?(r.final?g.finalCells:g.cells)[r.index]:undefined;}
 function finish(g:MysteryGame){const cell=currentMysteryCell(g)!;cell.used=true;g.turn=(g.turn+1)%g.teams.length;g.round=null;if(g.phase==='final'&&g.finalCells.every(c=>c.used))g.phase='ended';else if(g.phase==='main'&&g.cells.every(c=>c.used)&&!g.config.finalBattle)g.phase='ended';return g;}
 export type MysteryAction=
- |{type:'open';index:number}|{type:'showAnswer'}|{type:'select';index:number}|{type:'answerTeam';team:number}
- |{type:'grade';correct:boolean}|{type:'recipient';team:number}|{type:'reveal'}|{type:'unveil'}
+ |{type:'open';index:number}|{type:'showAnswer'}|{type:'hideAnswer'}|{type:'select';index:number}|{type:'answerTeam';team:number}
+ |{type:'partial';points:number}|{type:'replace';id:string}|{type:'timerReset'}|{type:'timerEnabled';enabled:boolean}|{type:'grade';correct:boolean}|{type:'recipient';team:number}|{type:'reveal'}|{type:'unveil'}
  |{type:'resolve';target?:number;outcome?:'win'|'lose'|'draw';bonus?:boolean}|{type:'continue'}
- |{type:'final'}|{type:'end'}|{type:'score';team:number;score:number}|{type:'sound'}|{type:'motion'}|{type:'timer'}|{type:'tick'};
+ |{type:'final'}|{type:'end'}|{type:'score';team:number;score:number;note?:string}|{type:'sound'}|{type:'motion'}|{type:'timer'}|{type:'tick'};
 export function mysteryReduce(g:MysteryGame,action:MysteryAction):MysteryGame{
  const r=g.round;const teamValid=(i:number|undefined)=>i!==undefined&&Number.isInteger(i)&&i>=0&&i<g.teams.length;
  const change=(fn:(a:MysteryGame)=>void)=>{const a=remember(g);fn(a);return a;};
  if(action.type==='sound')return {...g,config:{...g.config,sound:!g.config.sound}};
  if(action.type==='motion')return {...g,config:{...g.config,motion:!g.config.motion}};
- if(action.type==='score'){if(r||g.phase==='ended'||!teamValid(action.team)||!Number.isFinite(action.score))return g;return change(a=>{const t=a.teams[action.team];t.score=Math.max(0,Math.min(1000000,Math.floor(action.score)));a.logs.push(`Sửa điểm ${t.name}: ${t.score}.`);});}
+ if(action.type==='score'){if(r||g.phase==='ended'||!teamValid(action.team)||!Number.isFinite(action.score))return g;return change(a=>{const t=a.teams[action.team];t.score=Math.max(0,Math.min(1000000,Math.floor(action.score)));a.logs.push(`Sửa điểm ${t.name}: ${t.score}.${action.note?' · '+action.note:''}`);});}
  if(action.type==='end'){if(r||g.phase==='ended')return g;return change(a=>{a.phase='ended';a.logs.push('Giáo viên kết thúc ván.');});}
  if(action.type==='final'){if(r||g.phase!=='main'||!g.config.finalBattle)return g;return change(a=>{a.phase='final';a.logs.push('Bắt đầu Final Battle.');});}
  if(action.type==='open'){
   const cells=g.phase==='final'?g.finalCells:g.cells;if(g.phase==='ended'||r||!Number.isInteger(action.index)||!cells[action.index]||cells[action.index].used)return g;
-  return change(a=>{const q=(a.phase==='final'?a.finalCells:a.cells)[action.index].question;a.round={index:action.index,final:a.phase==='final',actor:a.turn,stage:'question',answerShown:false,selected:[],recipient:null,resolved:false,secondsLeft:q.seconds||a.config.seconds,timerRunning:false,before:a.teams.map(t=>t.score),message:''};});
+  return change(a=>{const q=(a.phase==='final'?a.finalCells:a.cells)[action.index].question;a.round={index:action.index,final:a.phase==='final',actor:a.turn,stage:'question',answerShown:false,selected:[],recipient:null,resolved:false,secondsLeft:a.config.timerEnabled===false?0:q.seconds||a.config.seconds,timerRunning:false,before:a.teams.map(t=>t.score),message:''};});
  }
+ if(action.type==='timerEnabled')return {...g,config:{...g.config,timerEnabled:action.enabled},round:r?{...r,timerRunning:false,secondsLeft:action.enabled?(currentMysteryCell(g)!.question.seconds||g.config.seconds||30):0}:null};
  if(!r)return g;
- if(action.type==='tick'){if(r.stage!=='question'||!r.timerRunning||r.secondsLeft<=0)return g;const a=structuredClone(g);a.round!.secondsLeft--;if(a.round!.secondsLeft===0)a.round!.timerRunning=false;return a;}
- if(action.type==='timer'){if(r.stage!=='question'||r.secondsLeft<=0)return g;return {...g,round:{...r,timerRunning:!r.timerRunning}};}
- if(action.type==='showAnswer'){if(r.stage!=='question'||r.answerShown)return g;return {...g,round:{...r,answerShown:true,timerRunning:false}};}
+ if(action.type==='timerReset'){if(r.stage!=='question'||g.config.timerEnabled===false)return g;return {...g,round:{...r,timerRunning:false,secondsLeft:currentMysteryCell(g)!.question.seconds||g.config.seconds||30}};}
+ if(action.type==='replace'){
+  if(r.stage!=='question'||r.answerShown||r.answerSeen)return g;const pool=g.spare??[],i=pool.findIndex(q=>q.id===action.id);
+  if(i<0||[...g.cells,...g.finalCells].some(c=>c.question.id===action.id))return g;
+  return change(a=>{const spare=a.spare??=[],next=spare.splice(i,1)[0],cell=currentMysteryCell(a)!;spare.push(cell.question);a.spare=spare;cell.question=next;a.round={...a.round!,selected:[],timerRunning:false,secondsLeft:a.config.timerEnabled===false?0:next.seconds||a.config.seconds};a.logs.push('Change question · '+next.question);});
+ }
+ if(action.type==='partial'){
+  if(r.stage!=='question'||!Number.isFinite(action.points)||action.points<0||action.points>currentMysteryCell(g)!.question.points)return g;
+  return change(a=>{a.teams[r.actor].score+=action.points;currentMysteryCell(a)!.correct=false;a.logs.push(`${a.teams[r.actor].name}: đúng một phần +${action.points} · không mở hộp.`);finish(a);});
+ }
+
+ if(action.type==='tick'){if(g.config.timerEnabled===false||r.stage!=='question'||!r.timerRunning||r.secondsLeft<=0)return g;const a=structuredClone(g);a.round!.secondsLeft--;if(a.round!.secondsLeft===0)a.round!.timerRunning=false;return a;}
+ if(action.type==='timer'){if(g.config.timerEnabled===false||r.stage!=='question'||r.secondsLeft<=0)return g;return {...g,round:{...r,timerRunning:!r.timerRunning}};}
+ if(action.type==='hideAnswer'){return r.stage==='question'?{...g,round:{...r,answerShown:false}}:g;}
+ if(action.type==='showAnswer'){if(r.stage!=='question'||r.answerShown)return g;return {...g,round:{...r,answerShown:true,answerSeen:true,timerRunning:false}};}
  if(action.type==='select'){const q=currentMysteryCell(g)?.question;if(r.stage!=='question'||r.answerShown||!Number.isInteger(action.index)||!(q?.type==='truefalse'?action.index>=0&&action.index<2:q?.options[action.index]))return g;return {...g,round:{...r,selected:q?.type==='truefalse'?[action.index]:r.selected.includes(action.index)?r.selected.filter(i=>i!==action.index):[...r.selected,action.index]}};}
  if(action.type==='answerTeam'){if(r.stage!=='question'||!teamValid(action.team))return g;return change(a=>{a.round!.actor=action.team;});}
  if(action.type==='grade'){
