@@ -1,0 +1,31 @@
+/* Compact controls only; retain the existing question, answer and modal layout. */
+.game-v3 .question-round .round-top{position:relative;align-items:center;gap:10px;margin-bottom:10px}
+.game-v3 .question-round .round-top .actions{gap:6px;align-items:center}
+.question-round .round-top .button,.question-round .round-top .icon{min-height:34px;height:auto;padding:6px 9px;font-size:13px;gap:5px}
+.game-v3 .question-round .round-top .teacher-timer{display:flex;align-items:center;gap:6px;padding:5px 8px}
+.question-round .teacher-timer label{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:6px;line-height:1;margin:0!important;padding:0;min-height:22px}
+.question-round .teacher-timer input{padding:0;margin:0;flex-shrink:0}
+.question-round .teacher-timer label svg{flex-shrink:0;color:#c5d6ec}
+.question-round .teacher-timer output{font-size:16px}
+.question-round .teacher-tools-row{position:static;display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:0}
+.question-round .teacher-tools-row>button{min-height:36px;padding:7px 10px;font-size:13px;gap:6px}
+.question-round .teacher-tools-row>.teacher-text-tools{position:static;flex:0 1 auto;min-width:0;margin:0;font-size:13px}
+.question-round .teacher-text-tools summary{padding:8px 10px;gap:6px;font-size:13px}
+.question-round .teacher-text-tools[open]>div{position:absolute;top:calc(100% + 8px);left:0;width:min(760px,100%);padding:15px;background:#10243d;border:1px solid #647f9e99;border-radius:9px;box-shadow:0 12px 30px #0008;z-index:10}
+.question-round .teacher-text-tools label{font-size:13px!important;gap:6px!important}
+.question-round .teacher-text-tools p{line-height:1.5}
+.question-round .answering-team-picker{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 10px auto;padding:0;border:0;border-radius:0;background:none;min-width:0}
+.question-round .answering-team-label{font-size:13px;font-weight:600;color:#f6d68a;white-space:nowrap}
+.question-round .answering-team-picker>div{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+.question-round .answering-team-picker button{flex:0 1 auto;min-width:64px;min-height:34px;padding:5px 12px;font-size:15px;border-radius:7px;overflow-wrap:anywhere}
+@media(max-width:800px){
+ .question-round .answering-team-picker{margin-left:0}
+ .question-round .teacher-text-tools[open]{flex-basis:100%}
+ .question-round .teacher-text-tools[open]>div{position:static;width:auto;box-shadow:none;border:0;background:none;padding:6px 10px 12px}
+}
+
+.game-v3 .round-modal.question-round{resize:horizontal;min-width:min(560px,calc(100vw - 32px));overflow:auto}
+.game-v3 .question-round .round-top .actions{margin-left:auto}
+.question-round .round-top .teacher-tools-row>button{min-height:36px}
+.question-round .question-width-toggle{width:36px;justify-content:center}
+@media(max-width:800px){.game-v3 .question-round .round-top .actions{margin-left:0}.question-round .teacher-tools-row{position:relative}.question-round .teacher-text-tools[open]>div{width:auto}}
