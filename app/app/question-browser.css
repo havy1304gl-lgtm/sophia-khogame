@@ -22,3 +22,11 @@
 @media(max-width:760px){.library-shell .workspace-content .bank-start-banner{display:grid;grid-template-columns:58px minmax(0,1fr);align-items:center;gap:12px}.library-shell .bank-start-banner .bank-cover{width:58px;height:66px;border-radius:7px}.library-shell .bank-start-banner>.button{grid-column:1/-1}.library-shell .bank-start-banner .eyebrow{display:none}.library-shell .bank-start-banner h2{font-size:17px}.library-shell .bank-start-banner p{font-size:11px}.library-shell:has(.bank-browser) .library-page-heading{padding-top:10px;padding-bottom:10px;margin-bottom:14px}.library-shell:has(.bank-browser) .section-heading{padding:14px}.library-shell:has(.bank-browser) .section-heading h2{font-size:21px}}
 
 .library-shell .bank-browser .row-actions{width:100%;max-width:none!important;min-width:0;justify-self:stretch}.library-shell .bank-browser .row-actions>.icon{width:29px!important;height:29px!important;min-height:29px!important;padding:6px!important}.library-shell .bank-browser .row-actions>.play-button{margin-left:0}
+
+/* Keep cover and copy side by side instead of stacking at tablet widths. */
+.library-shell .workspace-content .bank-start-banner{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:center;gap:12px 20px}
+.library-shell .bank-start-banner>.bank-cover{width:120px;height:86px;grid-column:1;grid-row:1;object-fit:cover}
+.library-shell .bank-start-banner>div{grid-column:2;grid-row:1;min-width:0}
+.library-shell .bank-start-banner>.button{grid-column:1/-1;width:100%}
+@media(min-width:1250px){.library-shell .workspace-content .bank-start-banner{grid-template-columns:120px minmax(0,1fr) auto}.library-shell .bank-start-banner>.button{grid-column:3;grid-row:1;width:auto}}
+@media(max-width:600px){.library-shell .workspace-content .bank-start-banner{grid-template-columns:78px minmax(0,1fr);gap:10px 12px}.library-shell .bank-start-banner>.bank-cover{width:78px;height:78px}.library-shell .bank-start-banner h2{font-size:17px}.library-shell .bank-start-banner p{font-size:11px}.library-shell .bank-start-banner .eyebrow{display:none}}

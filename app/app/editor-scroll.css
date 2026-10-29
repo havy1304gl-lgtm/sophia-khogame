@@ -15,3 +15,9 @@
     grid-template-rows: auto minmax(0, 1fr);
   }
 }
+
+/* Keep the question list readable in light interface themes. */
+.modal .question-nav{background:var(--ui-field,#0d192b);color:var(--ui-text,#eaf1fb)}
+.modal .question-nav>button{color:var(--ui-text,#eaf1fb)}
+.modal .question-nav>button.active{background:var(--ui-soft,#21384f);color:var(--ui-text,#eaf1fb)}
+.modal .question-nav small{color:var(--ui-muted,#a6bad0)}
