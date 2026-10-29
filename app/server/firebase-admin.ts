@@ -6,14 +6,7 @@ import {AccessServiceError,firebaseFailure,handleAccess,loginBucket} from './acc
 export async function accessEndpoint(request:Request,ip:string){
  const env=process.env;
  try{
-  const emulator=env.NODE_ENV!=='production'&&env.FIREBASE_AUTH_EMULATOR_HOST==='127.0.0.1:9099'&&env.FIRESTORE_EMULATOR_HOST==='127.0.0.1:8080'&&env.FIREBASE_PROJECT_ID?.startsWith('demo-');
-  const credential=emulator?null:JSON.parse(env.FIREBASE_SERVICE_ACCOUNT_JSON??'{}');
-  if(!emulator&&(!credential.project_id||!credential.private_key||!credential.client_email||credential.project_id!==env.FIREBASE_PROJECT_ID))throw new Error();
-  let app=getApps().find(a=>a.name==='sophia-access');
-  if(!app){
-   if(emulator)app=initializeApp({projectId:env.FIREBASE_PROJECT_ID},'sophia-access');
-   else{app=initializeApp({credential:cert(credential),projectId:credential.project_id},'sophia-access');}
-  }
+  const app=getSophiaAdminApp(),emulator=env.NODE_ENV!=='production'&&env.FIREBASE_AUTH_EMULATOR_HOST==='127.0.0.1:9099'&&env.FIRESTORE_EMULATOR_HOST==='127.0.0.1:8080'&&env.FIREBASE_PROJECT_ID?.startsWith('demo-'),credential=emulator?null:JSON.parse(env.FIREBASE_SERVICE_ACCOUNT_JSON??'{}');
   const db=getFirestore(app),version=env.SOPHIA_ACCESS_VERSION??'v1';
   return handleAccess(request,ip,{
    adminPassword:env.SOPHIA_ADMIN_PASSWORD??'',playerPassword:env.SOPHIA_PLAYER_PASSWORD??'',version,
@@ -32,4 +25,17 @@ export async function accessEndpoint(request:Request,ip:string){
    }
   });
  }catch{return new Response(JSON.stringify({error:'Cổng đăng nhập chưa kết nối Firebase. Chủ app cần hoàn tất cấu hình máy chủ.'}),{status:503,headers:{'Content-Type':'application/json','Cache-Control':'no-store'}});}
+}
+
+export function getSophiaAdminApp(){
+ const env=process.env;
+  const emulator=env.NODE_ENV!=='production'&&env.FIREBASE_AUTH_EMULATOR_HOST==='127.0.0.1:9099'&&env.FIRESTORE_EMULATOR_HOST==='127.0.0.1:8080'&&env.FIREBASE_PROJECT_ID?.startsWith('demo-');
+  const credential=emulator?null:JSON.parse(env.FIREBASE_SERVICE_ACCOUNT_JSON??'{}');
+  if(!emulator&&(!credential.project_id||!credential.private_key||!credential.client_email||credential.project_id!==env.FIREBASE_PROJECT_ID))throw new Error();
+  let app=getApps().find(a=>a.name==='sophia-access');
+  if(!app){
+   if(emulator)app=initializeApp({projectId:env.FIREBASE_PROJECT_ID},'sophia-access');
+   else{app=initializeApp({credential:cert(credential),projectId:credential.project_id},'sophia-access');}
+  }
+ return app;
 }

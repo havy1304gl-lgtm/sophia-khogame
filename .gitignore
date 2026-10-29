@@ -16,3 +16,7 @@ app/*-debug.log
 app/.openai/
 work/
 outputs/*.zip
+
+# Local validation files and private roster import scratch data.
+.tmp/
+app/.tmp/
