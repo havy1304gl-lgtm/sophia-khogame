@@ -10,7 +10,7 @@ export const interfaceThemes:InterfaceTheme[]=[
  {id:'forest',name:'Rừng đêm',description:'Xanh rêu trầm, dịu mắt khi dùng lâu',mode:'dark',colors:{bg:'#101f22',panel:'#193035',field:'#12272c',soft:'#254449',text:'#edf5e9',muted:'#acc8bd',line:'#47645e',accent:'#bddc98',accentText:'#263823',success:'#a8dfbc',danger:'#f0adba',sky1:'#132e38',sky2:'#42646a',hill1:'#2e5f58',hill2:'#467466',grass:'#648a69',road:'#455c60'}},
 ];
 export const interfaceThemeKey='sophia-interface-theme';
-export function validInterfaceTheme(value:unknown):InterfaceThemeId{return interfaceThemes.some(t=>t.id===value)?value as InterfaceThemeId:'original';}
-export function savedInterfaceTheme():InterfaceThemeId{try{return typeof localStorage==='undefined'?'original':validInterfaceTheme(localStorage.getItem(interfaceThemeKey));}catch{return'original';}}
+export function validInterfaceTheme(value:unknown):InterfaceThemeId{return interfaceThemes.some(t=>t.id===value)?value as InterfaceThemeId:'blossom';}
+export function savedInterfaceTheme():InterfaceThemeId{try{return typeof localStorage==='undefined'?'blossom':validInterfaceTheme(localStorage.getItem(interfaceThemeKey));}catch{return'blossom';}}
 export function applyInterfaceTheme(id:InterfaceThemeId){if(typeof document==='undefined')return;const theme=interfaceThemes.find(t=>t.id===id)??interfaceThemes[0],root=document.documentElement;root.dataset.uiTheme=theme.id;root.dataset.uiTone=theme.mode;root.style.colorScheme=theme.mode;for(const [key,value] of Object.entries(theme.colors)){const property='--ui-'+key.replace(/[A-Z]/g,m=>'-'+m.toLowerCase());if(theme.id==='original'&&['sky1','sky2','hill1','hill2','grass','road'].includes(key))root.style.removeProperty(property);else root.style.setProperty(property,value);}}
 export function restoreInterfaceTheme(){applyInterfaceTheme(savedInterfaceTheme());}

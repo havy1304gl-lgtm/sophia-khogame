@@ -1,0 +1,3 @@
+export type CallPlan={accepted:boolean;connectAt:number;finishAt:number;seconds:1|2;failure:'declined'|'unanswered'};
+export function makeCallPlan(accepted:boolean,random:()=>number=Math.random):CallPlan{const seconds=random()<.5?1:2,connectAt=1.6+random()*.9;return {accepted,seconds,connectAt,finishAt:accepted?connectAt+seconds+.65:4+random()*2,failure:random()<.5?'declined':'unanswered'};}
+export function callFrame(plan:CallPlan,clock:number){const connected=plan.accepted&&clock>=plan.connectAt;return {connected,finished:clock>=plan.finishAt,seconds:connected?Math.min(plan.seconds,Math.max(0,Math.floor(clock-plan.connectAt))):null};}
