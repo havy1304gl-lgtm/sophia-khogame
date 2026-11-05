@@ -1,4 +1,5 @@
 'use client';
+import {QuestionProgressProvider} from './question-progress';
 import {createContext,useContext,useState,type ReactNode} from 'react';
 import {ArrowRight,BookOpen,Check,HelpCircle,Library,Music2,Users,X} from 'lucide-react';
 import {LibraryBackdrop} from './library-backdrop';
@@ -10,7 +11,7 @@ import type {Quiz} from '../lib/engine';
 import './library-shell.css';
 
 const Selection=createContext<{selectedQuiz:Quiz|null;selectQuiz:(quiz:Quiz|null)=>void}>({selectedQuiz:null,selectQuiz:()=>{}});
-export function QuizSelectionProvider({children}:{children:ReactNode}){const [selectedQuiz,selectQuiz]=useState<Quiz|null>(null);return <Selection.Provider value={{selectedQuiz,selectQuiz}}>{children}</Selection.Provider>;}
+export function QuizSelectionProvider({children}:{children:ReactNode}){const [selectedQuiz,selectQuiz]=useState<Quiz|null>(null);return <QuestionProgressProvider><Selection.Provider value={{selectedQuiz,selectQuiz}}>{children}</Selection.Provider></QuestionProgressProvider>;}
 export const useSelectedQuiz=()=>useContext(Selection);
 export function LibraryShell({active,title,subtitle,onGames,onQuestions,onHelp,sidebar,tools,children}:{active:'games'|'questions'|'picker';title:string;subtitle:string;onGames:()=>void;onQuestions:()=>void;onHelp?:()=>void;sidebar?:ReactNode;tools?:ReactNode;children:ReactNode}){
  const {selectedQuiz,selectQuiz}=useSelectedQuiz();

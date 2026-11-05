@@ -1,0 +1,10 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {createMysteryGame,defaultMysteryConfig} from '../lib/mystery-engine.ts';
+import {mysteryDemo} from '../lib/mystery-demo.ts';
+import {randomStoneReward,makeChoiceOutcomes} from '../lib/engine.ts';
+function seeded(seed:number){return()=>{seed+=0x6D2B79F5;let t=seed;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+test('Mystery 24-box boards cannot create extra large rewards across seeds',()=>{const rng=seeded(20261105);for(let i=0;i<1000;i++){const game=createMysteryGame(mysteryDemo,['A','B'],defaultMysteryConfig,rng);assert.equal(game.cells.filter(c=>c.effect.kind==='points'&&c.effect.value>=5).length,5);assert.equal(game.cells.filter(c=>c.effect.kind==='points'&&c.effect.value>=7).length,3);assert.equal(game.cells.filter(c=>c.effect.kind==='points'&&c.effect.value===10).length,1);}});
+test('Mystery shuffle does not favor a fixed box for the top main-round prize',()=>{const rng=seeded(12062026),counts=Array(24).fill(0),n=12000;for(let i=0;i<n;i++){const game=createMysteryGame(mysteryDemo,['A','B'],defaultMysteryConfig,rng);counts[game.cells.findIndex(c=>c.effect.kind==='points'&&c.effect.value===10)]++;}for(const count of counts)assert.ok(Math.abs(count-n/24)<120,JSON.stringify(counts));});
+test('Infinity reward probability intervals match the configured 12/20/25/20/15/7/1 percent',()=>{const counts:Record<number,number>={};for(let i=0;i<10000;i++){const reward=randomStoneReward(()=>(i+.5)/10000);counts[reward]=(counts[reward]??0)+1;}assert.deepEqual(counts,{1:1200,2:2000,3:2500,4:2000,5:1500,6:700,12:100});});
+test('Three-way choice prizes are equally reachable in every position',()=>{for(const [kind,top] of [['arsenal',6],['portal',7],['cargo',9]] as const){const counts=[0,0,0];for(let a=0;a<3;a++)for(let b=0;b<2;b++){let call=0;const items=makeChoiceOutcomes(kind,()=>call++===0?(a+.5)/3:(b+.5)/2)!;counts[items.findIndex(e=>e.kind==='bonus'&&e.points===top)]++;}assert.deepEqual(counts,[2,2,2]);}});

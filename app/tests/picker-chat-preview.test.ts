@@ -1,0 +1,13 @@
+import {existsSync,statSync} from 'node:fs';
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {vietnameseGreetings,greetingRecording,hasVietnameseGreetings} from '../lib/vietnamese-greetings.ts';
+import {formatCallClock,formatCallDuration} from '../lib/picker-call.ts';
+import {filterChatContacts,contactSearchFrame} from '../lib/picker-chat-search.ts';
+import {normalizePickerSettings,updatePickerSettings} from '../lib/student-picker.ts';
+const students=[{id:'one',name:'Đỗ Ánh',number:'01',present:true},{id:'two',name:'Trần Anh',number:'12',present:true}];
+test('contact search accepts names without accents and roster numbers',()=>{assert.deepEqual(filterChatContacts(students,'do anh').map(s=>s.id),['one']);assert.deepEqual(filterChatContacts(students,'12').map(s=>s.id),['two']);assert.deepEqual(filterChatContacts(students,''),students);assert.deepEqual(filterChatContacts(students,'missing'),[]);});
+test('automatic search types the complete name before clicking the contact',()=>{const name='Nguyễn Thị Minh Anh';assert.equal(contactSearchFrame(name,0).query,'');assert.ok(contactSearchFrame(name,1).query.length<name.length);const end=contactSearchFrame(name,10);assert.equal(end.query,name);assert.equal(end.done,true);for(let t=0;t<6;t+=.05){const f=contactSearchFrame(name,t);if(f.done||f.clicking)assert.equal(f.query,name);}});
+test('browse preference is compatible with old saves and survives mode switches',()=>{let s=normalizePickerSettings({});assert.equal(s.chatBrowse,'scroll');s=updatePickerSettings(s,{chatBrowse:'search'});s=updatePickerSettings(s,{mode:'pasture'});s=updatePickerSettings(s,{mode:'chat'});assert.equal(s.chatBrowse,'search');});
+test('Vietnamese greeting choices resolve to eight distinct shipped audio clips',()=>{assert.equal(hasVietnameseGreetings(),true);const clips=[...vietnameseGreetings.male,...vietnameseGreetings.female];assert.equal(new Set(clips).size,8);for(const clip of clips){assert.match(clip,/^\/audio\/picker\/vi\/.*\.mp3$/);const path=new URL('../public'+clip,import.meta.url);assert.ok(existsSync(path));assert.ok(statSync(path).size>1000);}for(const voice of ['male','female'] as const){assert.equal(greetingRecording(voice,()=>0),vietnameseGreetings[voice][0]);assert.equal(greetingRecording(voice,()=>.999),vietnameseGreetings[voice].at(-1));}});
+test('call cards and timers use the actual connected duration, including minutes',()=>{assert.equal(formatCallDuration(5.9),'0 phút 5 giây');assert.equal(formatCallDuration(65),'1 phút 5 giây');assert.equal(formatCallClock(5),'00:05');assert.equal(formatCallClock(125),'02:05');});

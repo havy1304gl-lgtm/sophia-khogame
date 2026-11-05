@@ -1,3 +1,4 @@
+import {greetingRecording} from './vietnamese-greetings.ts';
 import type {PickerMode} from './student-picker';
 let ctx:AudioContext|null=null,soundLevel=.65;
 export type PickerCue='start'|'message'|'ring'|'win'|'busy'|'ambient'|'ufo'|'lift'|'bounce'|'splash'|'quack'|'tick';
@@ -27,3 +28,8 @@ export function startPickerMusic(mode:PickerMode,volume=.4){unlockPickerAudio();
  schedule();const timer=setInterval(schedule,80);return()=>{clearInterval(timer);bus.gain.cancelScheduledValues(audio.currentTime);bus.gain.setValueAtTime(0,audio.currentTime);for(const osc of notes){try{osc.stop();}catch{/* Already finished. */}}bus.disconnect();};
 }
 export function silencePickerAudio(){if(ctx)void ctx.suspend().catch(()=>{});}
+
+export type CallGreetingVoice='male'|'female';
+const greetingBuffers=new Map<string,Promise<AudioBuffer>>();
+export function primeCallGreeting(voice:CallGreetingVoice){const recording=greetingRecording(voice);if(!recording)return Promise.resolve(null);unlockPickerAudio();if(!ctx)return Promise.reject(new Error('Audio unavailable'));const audio=ctx;let pending=greetingBuffers.get(recording);if(!pending){pending=fetch(recording).then(r=>{if(!r.ok)throw new Error('Greeting unavailable');return r.arrayBuffer();}).then(bytes=>audio.decodeAudioData(bytes)).catch(error=>{greetingBuffers.delete(recording);throw error;});greetingBuffers.set(recording,pending);}return pending;}
+export function playCallGreeting(voice:CallGreetingVoice,volume=.8){let stopped=false,source:AudioBufferSourceNode|undefined;void primeCallGreeting(voice).then(buffer=>{if(stopped||!ctx||!buffer)return;source=ctx.createBufferSource();const gain=ctx.createGain();gain.gain.value=Math.max(0,Math.min(1,volume));source.buffer=buffer;source.connect(gain);gain.connect(ctx.destination);source.onended=()=>{source?.disconnect();gain.disconnect();};source.start();}).catch(()=>{});return()=>{stopped=true;try{source?.stop();}catch{}};}

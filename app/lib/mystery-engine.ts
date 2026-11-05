@@ -1,7 +1,9 @@
+import {makeChanceDeck,type ChanceSettings} from './chance.ts';
+import {orderedPlanQuestions,type QuestionPlan} from './question-progress.ts';
 import {shuffle,validateQuestion,type Question,type Quiz} from './engine.ts';
 
 export type MysteryEffect={kind:'points';value:number}|{kind:'bomb'|'bombAll'|'swap'|'increase'|'decrease'|'rps'|'finalChoice'};
-export type MysteryConfig={count:number;labels:'numbers'|'letters';seconds:number;finalBattle:boolean;sound:boolean;motion:boolean;timerEnabled?:boolean};
+export type MysteryConfig={chance?:ChanceSettings;finalChance?:ChanceSettings;questionPlan?:QuestionPlan;count:number;labels:'numbers'|'letters';seconds:number;finalBattle:boolean;sound:boolean;motion:boolean;timerEnabled?:boolean};
 export type MysteryTeam={name:string;score:number;color:string};
 export type MysteryCell={question:Question;effect:MysteryEffect;used:boolean;correct?:boolean};
 export type MysteryRound={index:number;final:boolean;actor:number;stage:'question'|'decision'|'sealed'|'revealing'|'result';answerShown:boolean;answerSeen?:boolean;selected:number[];recipient:number|null;resolved:boolean;secondsLeft:number;timerRunning:boolean;before:number[];message:string};
@@ -19,13 +21,16 @@ export function createMysteryGame(quiz:Quiz,names:string[],config:MysteryConfig,
  const needed=config.count+(config.finalBattle?3:0);if(quiz.questions.length<needed)throw new Error(`Cần ${needed} câu: ${config.count} câu chính${config.finalBattle?' và 3 câu Final Battle':''}.`);
  const source=structuredClone(quiz.questions);for(const q of source)if(validateQuestion(q).length)throw new Error('Bộ đề có câu hỏi chưa hợp lệ. Vui lòng sửa trong Kho đề.');
  // The supplied deck has a separate three-question finale. Preserve that separation.
- const original=quiz.id==='mystery-ppt';const main=shuffle(original?source.slice(0,24):source,rng);
- const final=original?source.slice(24):main.slice(config.count,config.count+3);
+ const original=quiz.id==='mystery-ppt',planned=orderedPlanQuestions(source,config.questionPlan);const main=planned??shuffle(original?source.slice(0,24):source,rng);
+ const final=planned?planned.slice(config.count,config.count+3):original?source.slice(24):main.slice(config.count,config.count+3);
+ if(planned&&planned.length<needed)throw new Error('Chưa đủ câu phù hợp với cách chọn hiện tại.');
  if(original&&config.count>24)throw new Error('Bộ PPT mẫu có 24 ô chính.');
- const effects:MysteryEffect[]=[];while(effects.length<config.count)effects.push(...shuffle(structuredClone(originalEffects),rng));
- const finalEffects=shuffle<MysteryEffect>([{kind:'finalChoice'},{kind:'bomb'},{kind:'points',value:15}],rng);
+ const options=originalEffects.filter((e,i,a)=>a.findIndex(x=>JSON.stringify(e)===JSON.stringify(x))===i);
+ const effects:MysteryEffect[]=config.chance?makeChanceDeck(options,config.count,config.chance,e=>e.kind==='points'&&e.value>=7,rng):[];if(!config.chance)while(effects.length<config.count)effects.push(...shuffle(structuredClone(originalEffects),rng));
+ const finalOptions:MysteryEffect[]=[{kind:'finalChoice'},{kind:'bomb'},{kind:'points',value:15}];
+ const finalEffects=config.finalChance&&config.finalBattle?makeChanceDeck(finalOptions,3,config.finalChance,e=>e.kind==='points'&&e.value===15,rng):shuffle(finalOptions,rng);
  const cell=(question:Question,effect:MysteryEffect):MysteryCell=>({question,effect,used:false});
- return {version:1,quizId:quiz.id,quizTitle:quiz.title,config:{...config},teams:names.map((name,i)=>({name:name.trim().slice(0,50)||`Đội ${i+1}`,score:0,color:teamColors[i]})),cells:main.slice(0,config.count).map((q,i)=>cell(q,effects[i])),finalCells:config.finalBattle?final.slice(0,3).map((q,i)=>cell(q,finalEffects[i])):[],phase:'main',turn:0,round:null,spare:main.slice(config.count+(original?0:config.finalBattle?3:0)),logs:[],history:[],startedAt:new Date().toISOString()};
+ return {version:1,quizId:quiz.id,quizTitle:quiz.title,config:{...config},teams:names.map((name,i)=>({name:name.trim().slice(0,50)||`Đội ${i+1}`,score:0,color:teamColors[i]})),cells:main.slice(0,config.count).map((q,i)=>cell(q,effects[i])),finalCells:config.finalBattle?final.slice(0,3).map((q,i)=>cell(q,finalEffects[i])):[],phase:'main',turn:0,round:null,spare:main.slice(config.count+(config.finalBattle&&(planned||!original)?3:0)),logs:[],history:[],startedAt:new Date().toISOString()};
 }
 function remember(g:MysteryGame){const {history,...state}=g;const a=structuredClone(g);a.history=[...history.slice(-29),structuredClone(state)];return a;}
 export function undoMystery(g:MysteryGame):MysteryGame{const prev=g.history.at(-1);return prev?{...structuredClone(prev),history:g.history.slice(0,-1)}:g;}
